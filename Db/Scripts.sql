@@ -20,7 +20,7 @@ CREATE TABLE `containers` (
 -- `control-ctnr`.produto definition
 
 CREATE TABLE `produto` (
-  `ID` int(11) NOT NULL,
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `NOME` varchar(100) NOT NULL,
   `QUANTIDADE` int(11) NOT NULL,
   `ID_CTNR` int(11) NOT NULL,
