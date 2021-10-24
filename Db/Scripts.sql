@@ -6,7 +6,7 @@
 
 -- `control-ctnr`.navio definition
 
-CREATE TABLE `navio` (
+CREATE TABLE `navios` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `NOME` varchar(100) NOT NULL,
   `NUM_VIAGEM` varchar(100) NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE `navio` (
 
 -- `control-ctnr`.cliente definition
 
-CREATE TABLE `cliente` (
+CREATE TABLE `clientes` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `NOME` varchar(100) NOT NULL,
   `CNPJ` varchar(25) NOT NULL,
@@ -43,7 +43,7 @@ CONSTRAINT `containers_FK_1` FOREIGN KEY (`ID_CLIENTE`) REFERENCES `cliente` (`I
 
 -- `control-ctnr`.produto definition
 
-CREATE TABLE `produto` (
+CREATE TABLE `produtos` (
 `ID` int(11) NOT NULL AUTO_INCREMENT,
 `NOME` varchar(100) NOT NULL,
 `QUANTIDADE` int(11) NOT NULL,

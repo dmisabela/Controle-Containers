@@ -1,8 +1,11 @@
 <?php
-header('location: navio-index.php');
+//header('location: navio-index.php');
 spl_autoload_register(function ($class_name) {
-    include '..\\..\\'.$class_name . '.php';
+    include '..\\'.$class_name . '.php';
 });
+
+echo ("Inserido:". $_POST['nomeNavio']);
+
 
 use Models\Navio;
 use Db\Persiste;

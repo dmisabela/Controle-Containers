@@ -5,21 +5,21 @@ namespace Models; // agrupamento de classes (caminho)
 // obs.: Atividade implementa a interface Idados, significando que implementa todos os métodos definidos pela interface
 class Navio implements Idados{
     // Propriedades
-    protected $id;
-    protected $nome;
-    protected $numeroViagem;
+    protected $ID;
+    protected $NOME;
+    protected $NUM_VIAGEM;
     // obs.: propriedades protected são acessíveis por subclasses (extend)
 
     // Método construtor.
     public function __construct($id, $nome,$numeroViagem){
-        $this->id = $id;
-        $this->nome=$nome;
-        $this->numeroViagem=$numeroViagem;
+        $this->ID = $id;
+        $this->NOME=$nome;
+        $this->NUM_VIAGEM=$numeroViagem;
     }
 
     // Método obrigatório pois é definido na interface
     public function toString(){
-        return $this->id.' '.$this->nome.' '.$this->numeroViagem;
+        return $this->ID.' '.$this->NOME.' '.$this->NUM_VIAGEM;
     }
 
     // Método obrigatório pois é definido na interface
@@ -30,7 +30,7 @@ class Navio implements Idados{
 
     // Método que retorna vetor associativo contendo os valores das propriedades
     public function toArray() {
-        return ['id'=>$this->id,'nome'=>$this->nome,'detalhe'=>$this->numeroViagem];
+        return ['id'=>$this->ID,'nome'=>$this->NOME,'detalhe'=>$this->NUM_VIAGEM];
     }
 
     // Inclui o conteúdo do Trait
