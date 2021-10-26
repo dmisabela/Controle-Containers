@@ -18,8 +18,8 @@ spl_autoload_register(function ($class_name) {
 
     foreach($navios as $p){
         echo "<tr><td>$p->getID</td><td>$p->getNOME</td><td>$p->getNUM_VIAGEM</td>"
-            ."<td><a href='pessoa.edit.php?id=$p->getID' class='btn btn-primary btn-small'>Editar</a></td>"
-            ."<td><a href='pessoa.delete.php?id=$p->getID' class='btn btn-primary btn-small'>Excluir</a></td></tr>";
+            ."<td><a href='navio-edit.php?id=$p->getID' class='btn btn-primary btn-small'>Editar</a></td>"
+            ."<td><a href='navio-delete.php?id=$p->getID' class='btn btn-primary btn-small'>Excluir</a></td></tr>";
     }
 
     ?>

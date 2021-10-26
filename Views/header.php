@@ -29,7 +29,7 @@
                 <a class="nav-link" href="/phpexemplo">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/phpexemplo/Views/pessoa.index.php">Pessoa</a>
+                <a class="nav-link" href="/Navio/navio-index.php">Navio</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/phpexemplo/Views/projeto.index.php">Projeto</a>

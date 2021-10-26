@@ -2,7 +2,7 @@
 <div class=container>
     <div class="row">
         <div class="col-sm-6">
-            <h3 class="">Criar Pessoa</h3>
+            <h3 class="">Criar Navio</h3>
             <form action="navio-store.php" method="post">
                 <div class="form-group">
                     <label for="nome">Nome do Navio</label>
