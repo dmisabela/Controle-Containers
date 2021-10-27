@@ -220,7 +220,7 @@ class Persiste{
 	{
 		// sql: update pessoas set nome=:nnome, telefone=:ntel where id=:id
 
-		try {
+
 			// Cria objeto PDO
 			$pdo = new PDO(hostDb,usuario,senha);
 
@@ -246,7 +246,7 @@ class Persiste{
 			$vetor = [];
 			foreach($rf->getProperties() as $p)
 			{
-				if ($p->name!='id')
+				if ($p->name!='ID')
 				{
 					$parametros = $parametros.$p->name.' = :'.$p->name.',';
 				}
@@ -255,22 +255,15 @@ class Persiste{
 			$parametros = substr($parametros,0,-1); // retira última virgula
 
 			// Prepara o comando SQL
-			$stmt = $pdo->prepare("update $tabela set $parametros where id=:id");
-
+			$stmt = $pdo->prepare("update $tabela set $parametros where ID=:ID");
+            var_dump($stmt);
+            var_dump($vetor);
 			// Executa comando SQL
 			$stmt->execute($vetor);
 
 			$retorno = true;
 
-		//Desvia para catch no caso de erros.	
-		} catch (PDOException $pex) {
-			//poder ser usado "$pex->getMessage();" ou "$pex->getCode();" para se obter detalhes sobre o erro.
-			$retorno = false;
-
-		// Sempre executa o bloco finally, tendo ocorrido ou não erros no bloco TRY	
-		} finally {
-			$pdo=null;
-		}
+		$pdo = null;
 
 		return $retorno;
 
