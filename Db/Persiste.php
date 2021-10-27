@@ -315,55 +315,5 @@ class Persiste{
 		return $retorno;
 	}
 
-    public static function GetAll2() //($inicioPagina,$tamanhoPagina)
-    {
-        try {
-            // Cria objeto PDO
-            $pdo = new PDO(hostDb,usuario,senha);
-
-            // Configura o comportamento no caso de erros: levanta exceção.
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            // Não emula comandos preparados, usa nativo do driver do banco
-            $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
-
-            // ReflectionClass usada para inspecionar a classe
-            // obtendo suas propriedades, métodos, constantes, etc.
-
-
-            // Nome da tabela é igual ao nome da classe no plural minúsculas
-
-
-
-            $stmt = $pdo->prepare("select * from navio order by id");
-
-            // Executa comando SQL
-            $stmt->execute();
-
-            // Resultado na forma de vetor associativo
-            $stmt->setFetchMode(PDO::FETCH_ASSOC);
-
-            $retorno = []; // vetor vazio
-            $linha = $stmt->fetchAll();
-           return $linha;
-
-            // Desvia para catch no caso de erros.
-        } catch (PDOException $pex) {
-            //poder ser usado "$pex->getMessage();" ou "$pex->getCode();" para se obter detalhes sobre o erro.
-            $retorno = null;
-
-            // Sempre executa o bloco finally, tendo ocorrido ou não erros no bloco TRY
-        } finally {
-            $pdo=null;
-        }
-
-        return $retorno;
-    }
-
-
-
-
-
-
 }
 ?>
