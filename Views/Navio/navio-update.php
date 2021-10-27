@@ -1,5 +1,5 @@
 <?php
-//header('location: navio-index.php'); // redireciona para o local indicado
+header('location: navio-index.php'); // redireciona para o local indicado
 
 spl_autoload_register(function ($class_name) {
     include '..\\..\\'.$class_name . '.php';
