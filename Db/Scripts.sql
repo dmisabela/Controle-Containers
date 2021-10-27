@@ -35,8 +35,8 @@ CREATE TABLE `containers` (
 PRIMARY KEY (`ID`),
 KEY `containers_FK` (`ID_NAVIO`),
 KEY `containers_FK_1` (`ID_CLIENTE`),
-CONSTRAINT `containers_FK` FOREIGN KEY (`ID_NAVIO`) REFERENCES `navio` (`ID`),
-CONSTRAINT `containers_FK_1` FOREIGN KEY (`ID_CLIENTE`) REFERENCES `cliente` (`ID`)
+CONSTRAINT `containers_FK` FOREIGN KEY (`ID_NAVIO`) REFERENCES `navios` (`ID`),
+CONSTRAINT `containers_FK_1` FOREIGN KEY (`ID_CLIENTE`) REFERENCES `clientes` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
