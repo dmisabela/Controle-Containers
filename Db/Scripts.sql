@@ -1,7 +1,7 @@
 ---------------------SCRIPTS---------------------
 
 
-
+CREATE DATABASE `controle_containers`
 
 
 -- `control-ctnr`.navio definition
