@@ -27,295 +27,70 @@ include('ConfiguracaoConexao.php');
 
 class Persiste{
 
-	// Método para adicionar um objeto de classe "qualquer" ao banco de dados
-	// Nome da tabela será o nome da classe do objeto no plural
-	public static function Add(Object $obj){
-		
-		try {
-			// Cria objeto PDO
-			$pdo = new PDO(hostDb,usuario,senha);
+    // Método para adicionar um objeto de classe "qualquer" ao banco de dados
+    // Nome da tabela será o nome da classe do objeto no plural
+    public static function Add(Object $obj){
 
-			// Configura o comportamento no caso de erros: levanta exceção.
-			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try {
+            // Cria objeto PDO
+            $pdo = new PDO(hostDb,usuario,senha);
 
-			// Não emula comandos preparados, usa nativo do driver do banco
-			$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
+            // Configura o comportamento no caso de erros: levanta exceção.
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-			// ReflectionClass usada para inspecionar o objeto
-			// obtendo sua classe, propriedades, métodos, constantes, etc.
-			$rf = new ReflectionClass($obj);
+            // Não emula comandos preparados, usa nativo do driver do banco
+            $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
 
-			// Obtém o nome da classe e define o nome da tabela como sendo
-			// o nome da classe no plural em minúsculas
-			$aux = explode("\\",$rf->name);
-			$tabela = array_pop($aux);
-			$tabela = strtolower($tabela.'s');
+            // ReflectionClass usada para inspecionar o objeto
+            // obtendo sua classe, propriedades, métodos, constantes, etc.
+            $rf = new ReflectionClass($obj);
 
-			// Gera lista de colunas, lista de parâmetros e vetor com os dados
-			// para preparar o comando e executá-lo.
-			$colunas = "";
-			$parametros = "";
-			$vetor = [];
-			$primeiro = true;
-			foreach($rf->getProperties() as $p)
-			{
-				if ($primeiro) {$primeiro=false; continue;}  // descarta o id
-				$colunas = $colunas.$p->name.',';
-				$parametros = $parametros.':'.$p->name.',';
-				$vetor[$p->name]= $obj->{'get'.$p->name};
-			}
-			$colunas = substr($colunas,0,-1);   // retira última virgula
-			$parametros = substr($parametros,0,-1);
+            // Obtém o nome da classe e define o nome da tabela como sendo
+            // o nome da classe no plural em minúsculas
+            $aux = explode("\\",$rf->name);
+            $tabela = array_pop($aux);
+            $tabela = strtolower($tabela.'s');
 
-			// Prepara o comando SQL
-			$stmt = $pdo->prepare("insert into $tabela ($colunas) values ($parametros)");
+            // Gera lista de colunas, lista de parâmetros e vetor com os dados
+            // para preparar o comando e executá-lo.
+            $colunas = "";
+            $parametros = "";
+            $vetor = [];
+            $primeiro = true;
+            foreach($rf->getProperties() as $p)
+            {
+                if ($primeiro) {$primeiro=false; continue;}  // descarta o id
+                $colunas = $colunas.$p->name.',';
+                $parametros = $parametros.':'.$p->name.',';
+                $vetor[$p->name]= $obj->{'get'.$p->name};
+            }
+            $colunas = substr($colunas,0,-1);   // retira última virgula
+            $parametros = substr($parametros,0,-1);
 
-			// Executa comando SQL
-			$stmt->execute($vetor);
+            // Prepara o comando SQL
+            $stmt = $pdo->prepare("insert into $tabela ($colunas) values ($parametros)");
 
-			$retorno = true;
+            // Executa comando SQL
+            $stmt->execute($vetor);
 
-		//Desvia para catch no caso de erros.	
-		} catch (PDOException $pex) {
-			//poder ser usado "$pex->getMessage();" ou "$pex->getCode();" para se obter detalhes sobre o erro.
-			$retorno = false;
+            $retorno = true;
 
-		// Sempre executa o bloco finally, tendo ocorrido ou não erros no bloco TRY	
-		} finally {
-			$pdo=null;
-		}
+            //Desvia para catch no caso de erros.
+        } catch (PDOException $pex) {
+            //poder ser usado "$pex->getMessage();" ou "$pex->getCode();" para se obter detalhes sobre o erro.
+            $retorno = false;
 
-		return $retorno;
-	}
+            // Sempre executa o bloco finally, tendo ocorrido ou não erros no bloco TRY
+        } finally {
+            $pdo=null;
+        }
 
-	// Obtém todos os objetos do banco de dados
-	// Parâmetro: nome da classe dos objetos
-	public static function GetAll($nomeclasse) //($inicioPagina,$tamanhoPagina)
-	{
-		try {
-			// Cria objeto PDO
-			$pdo = new PDO(hostDb,usuario,senha);
+        return $retorno;
+    }
 
-			// Configura o comportamento no caso de erros: levanta exceção.
-			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-			// Não emula comandos preparados, usa nativo do driver do banco
-			$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
-
-			// ReflectionClass usada para inspecionar a classe
-			// obtendo suas propriedades, métodos, constantes, etc.
-			$rf = new ReflectionClass($nomeclasse);
-
-			// Nome da tabela é igual ao nome da classe no plural minúsculas
-			$aux = explode("\\",$nomeclasse);
-			$tabela = array_pop($aux);
-			$tabela = strtolower($tabela.'s');
-
-			// Gera lista de colunas, lista de parâmetros e vetor com os dados
-			// para preparar o comando e executá-lo.
-			$colunas = "";
-			foreach($rf->getProperties() as $p)
-			{
-				$colunas = $colunas.$p->name.',';
-			}
-			$colunas = substr($colunas,0,-1);   // retira última virgula
-
-			$stmt = $pdo->prepare("select $colunas from $tabela order by id");
-
-			// Executa comando SQL
-			$stmt->execute();
-
-			// Resultado na forma de vetor associativo
-			$stmt->setFetchMode(PDO::FETCH_ASSOC);
-
-			$retorno = []; // vetor vazio
-			$linha = $stmt->fetch();
-			while ($linha != null)
-			{
-				$obj = $rf->newInstanceWithoutConstructor();
-				foreach($linha as $i=>$v)
-				{
-					$obj->{'set'.$i} = $v;
-				}
-				array_push($retorno,$obj);
-				$linha = $stmt->fetch();
-			}
-
-		// Desvia para catch no caso de erros.	
-		} catch (PDOException $pex) {
-			//poder ser usado "$pex->getMessage();" ou "$pex->getCode();" para se obter detalhes sobre o erro.
-			$retorno = null;
-
-		// Sempre executa o bloco finally, tendo ocorrido ou não erros no bloco TRY	
-		} finally {
-			$pdo=null;
-		}
-
-		return $retorno;
-	}
-
-	public static function GetById($nomeclasse,$id)
-	{
-		try {
-			// Cria objeto PDO
-			$pdo = new PDO(hostDb,usuario,senha);
-
-			// Configura o comportamento no caso de erros: levanta exceção.
-			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-			// Não emula comandos preparados, usa nativo do driver do banco
-			$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
-
-			// ReflectionClass usada para inspecionar a classe
-			// obtendo suas propriedades, métodos, constantes, etc.
-			$rf = new ReflectionClass($nomeclasse);
-
-			// Nome da tabela é igual ao nome da classe no plural minúsculas
-			$aux = explode("\\",$nomeclasse);
-			$tabela = array_pop($aux);
-			$tabela = strtolower($tabela.'s');
-
-			// Gera lista de colunas, lista de parâmetros e vetor com os dados
-			// para preparar o comando e executá-lo.
-			$colunas = "";
-			foreach($rf->getProperties() as $p)
-			{
-				$colunas = $colunas.$p->name.',';
-			}
-			$colunas = substr($colunas,0,-1);   // retira última virgula
-
-			$stmt = $pdo->prepare("select $colunas from $tabela where id=:id");
-
-			// Executa comando SQL
-			$stmt->execute([':id'=>$id]);
-
-			// Resultado na forma de vetor associativo
-			$stmt->setFetchMode(PDO::FETCH_ASSOC);
-
-			$obj = null;
-			$linha = $stmt->fetch();
-			if ($linha!=null)
-			{
-				$obj = $rf->newInstanceWithoutConstructor();
-				foreach($linha as $i=>$v)
-				{
-					$obj->{'set'.$i} = $v;
-				}
-			}
-
-		// Desvia para catch no caso de erros.	
-		} catch (PDOException $pex) {
-			//poder ser usado "$pex->getMessage();" ou "$pex->getCode();" para se obter detalhes sobre o erro.
-			$retorno = null;
-
-		// Sempre executa o bloco finally, tendo ocorrido ou não erros no bloco TRY	
-		} finally {
-			$pdo=null;
-		}
-
-		return $obj;
-	}
-
-	public static function Update(Object $obj)
-	{
-		// sql: update pessoas set nome=:nnome, telefone=:ntel where id=:id
-
-		try {
-			// Cria objeto PDO
-			$pdo = new PDO(hostDb,usuario,senha);
-
-			// Configura o comportamento no caso de erros: levanta exceção.
-			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-			// Não emula comandos preparados, usa nativo do driver do banco
-			$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
-
-			// ReflectionClass usada para inspecionar o objeto
-			// obtendo sua classe, propriedades, métodos, constantes, etc.
-			$rf = new ReflectionClass($obj);
-
-			// Obtém o nome da classe e define o nome da tabela como sendo
-			// o nome da classe no plural em minúsculas
-			$aux = explode("\\",$rf->name);
-			$tabela = array_pop($aux);
-			$tabela = strtolower($tabela.'s');
-
-			// Gera lista de colunas, lista de parâmetros e vetor com os dados
-			// para preparar o comando e executá-lo.
-			$parametros = "";
-			$vetor = [];
-			foreach($rf->getProperties() as $p)
-			{
-				if ($p->name!='id')
-				{
-					$parametros = $parametros.$p->name.' = :'.$p->name.',';
-				}
-				$vetor[':'.$p->name]= $obj->{'get'.$p->name};
-			}
-			$parametros = substr($parametros,0,-1); // retira última virgula
-
-			// Prepara o comando SQL
-			$stmt = $pdo->prepare("update $tabela set $parametros where id=:id");
-
-			// Executa comando SQL
-			$stmt->execute($vetor);
-
-			$retorno = true;
-
-		//Desvia para catch no caso de erros.	
-		} catch (PDOException $pex) {
-			//poder ser usado "$pex->getMessage();" ou "$pex->getCode();" para se obter detalhes sobre o erro.
-			$retorno = false;
-
-		// Sempre executa o bloco finally, tendo ocorrido ou não erros no bloco TRY	
-		} finally {
-			$pdo=null;
-		}
-
-		return $retorno;
-
-	}
-
-	public static function Delete($nomeclasse,$id)
-	{
-		// sql: delete from pessoa where id=:id
-		try {
-			// Cria objeto PDO
-			$pdo = new PDO(hostDb,usuario,senha);
-
-			// Configura o comportamento no caso de erros: levanta exceção.
-			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-			// Não emula comandos preparados, usa nativo do driver do banco
-			$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
-
-			// Obtém o nome da classe e define o nome da tabela como sendo
-			// o nome da classe no plural em minúsculas
-			$aux = explode('\\',$nomeclasse);
-			$tabela = array_pop($aux);
-			$tabela = strtolower($tabela.'s');
-
-			$stmt = $pdo->prepare("delete from $tabela where id=:id");
-
-			// Executa comando SQL
-			$stmt->execute([':id'=>$id]);
-
-			$retorno = true;
-
-		// Desvia para catch no caso de erros.	
-		} catch (PDOException $pex) {
-			//poder ser usado "$pex->getMessage();" ou "$pex->getCode();" para se obter detalhes sobre o erro.
-			$retorno = false;
-
-		// Sempre executa o bloco finally, tendo ocorrido ou não erros no bloco TRY	
-		} finally {
-			$pdo=null;
-		}
-
-		return $retorno;
-	}
-
-    public static function GetAll2() //($inicioPagina,$tamanhoPagina)
+    // Obtém todos os objetos do banco de dados
+    // Parâmetro: nome da classe dos objetos
+    public static function GetAll($nomeclasse) //($inicioPagina,$tamanhoPagina)
     {
         try {
             // Cria objeto PDO
@@ -329,13 +104,23 @@ class Persiste{
 
             // ReflectionClass usada para inspecionar a classe
             // obtendo suas propriedades, métodos, constantes, etc.
-
+            $rf = new ReflectionClass($nomeclasse);
 
             // Nome da tabela é igual ao nome da classe no plural minúsculas
+            $aux = explode("\\",$nomeclasse);
+            $tabela = array_pop($aux);
+            $tabela = strtolower($tabela.'s');
 
+            // Gera lista de colunas, lista de parâmetros e vetor com os dados
+            // para preparar o comando e executá-lo.
+            $colunas = "";
+            foreach($rf->getProperties() as $p)
+            {
+                $colunas = $colunas.$p->name.',';
+            }
+            $colunas = substr($colunas,0,-1);   // retira última virgula
 
-
-            $stmt = $pdo->prepare("select * from navio order by id");
+            $stmt = $pdo->prepare("select $colunas from $tabela order by id");
 
             // Executa comando SQL
             $stmt->execute();
@@ -344,8 +129,17 @@ class Persiste{
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
             $retorno = []; // vetor vazio
-            $linha = $stmt->fetchAll();
-           return $linha;
+            $linha = $stmt->fetch();
+            while ($linha != null)
+            {
+                $obj = $rf->newInstanceWithoutConstructor();
+                foreach($linha as $i=>$v)
+                {
+                    $obj->{'set'.$i} = $v;
+                }
+                array_push($retorno,$obj);
+                $linha = $stmt->fetch();
+            }
 
             // Desvia para catch no caso de erros.
         } catch (PDOException $pex) {
@@ -360,10 +154,177 @@ class Persiste{
         return $retorno;
     }
 
+    public static function GetById($nomeclasse,$id)
+    {
+        try {
+            // Cria objeto PDO
+            $pdo = new PDO(hostDb,usuario,senha);
+
+            // Configura o comportamento no caso de erros: levanta exceção.
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            // Não emula comandos preparados, usa nativo do driver do banco
+            $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
+
+            // ReflectionClass usada para inspecionar a classe
+            // obtendo suas propriedades, métodos, constantes, etc.
+            $rf = new ReflectionClass($nomeclasse);
+
+            // Nome da tabela é igual ao nome da classe no plural minúsculas
+            $aux = explode("\\",$nomeclasse);
+            $tabela = array_pop($aux);
+            $tabela = strtolower($tabela.'s');
+
+            // Gera lista de colunas, lista de parâmetros e vetor com os dados
+            // para preparar o comando e executá-lo.
+            $colunas = "";
+            foreach($rf->getProperties() as $p)
+            {
+                $colunas = $colunas.$p->name.',';
+            }
+            $colunas = substr($colunas,0,-1);   // retira última virgula
+
+            $stmt = $pdo->prepare("select $colunas from $tabela where id=:id");
+
+            // Executa comando SQL
+            $stmt->execute([':id'=>$id]);
+
+            // Resultado na forma de vetor associativo
+            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+            $obj = null;
+            $linha = $stmt->fetch();
+            if ($linha!=null)
+            {
+                $obj = $rf->newInstanceWithoutConstructor();
+                foreach($linha as $i=>$v)
+                {
+                    $obj->{'set'.$i} = $v;
+                }
+            }
+
+            // Desvia para catch no caso de erros.
+        } catch (PDOException $pex) {
+            //poder ser usado "$pex->getMessage();" ou "$pex->getCode();" para se obter detalhes sobre o erro.
+            $retorno = null;
+
+            // Sempre executa o bloco finally, tendo ocorrido ou não erros no bloco TRY
+        } finally {
+            $pdo=null;
+        }
+
+        return $obj;
+    }
+
+    public static function Update(Object $obj)
+    {
+        // sql: update pessoas set nome=:nnome, telefone=:ntel where id=:id
+
+        try {
+            // Cria objeto PDO
+            $pdo = new PDO(hostDb,usuario,senha);
+
+            // Configura o comportamento no caso de erros: levanta exceção.
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            // Não emula comandos preparados, usa nativo do driver do banco
+            $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
+
+            // ReflectionClass usada para inspecionar o objeto
+            // obtendo sua classe, propriedades, métodos, constantes, etc.
+            $rf = new ReflectionClass($obj);
+
+            // Obtém o nome da classe e define o nome da tabela como sendo
+            // o nome da classe no plural em minúsculas
+            $aux = explode("\\",$rf->name);
+            $tabela = array_pop($aux);
+            $tabela = strtolower($tabela.'s');
+
+            // Gera lista de colunas, lista de parâmetros e vetor com os dados
+            // para preparar o comando e executá-lo.
+            $parametros = "";
+            $vetor = [];
+            foreach($rf->getProperties() as $p)
+            {
+                if ($p->name!='id')
+                {
+                    $parametros = $parametros.$p->name.' = :'.$p->name.',';
+                }
+                $vetor[':'.$p->name]= $obj->{'get'.$p->name};
+            }
+            $parametros = substr($parametros,0,-1); // retira última virgula
+
+            // Prepara o comando SQL
+            $stmt = $pdo->prepare("update $tabela set $parametros where id=:id");
+
+            // Executa comando SQL
+            $stmt->execute($vetor);
+
+            $retorno = true;
+
+            //Desvia para catch no caso de erros.
+        } catch (PDOException $pex) {
+            //poder ser usado "$pex->getMessage();" ou "$pex->getCode();" para se obter detalhes sobre o erro.
+            $retorno = false;
+
+            // Sempre executa o bloco finally, tendo ocorrido ou não erros no bloco TRY
+        } finally {
+            $pdo=null;
+        }
+
+        return $retorno;
+
+    }
+
+    public static function Delete($nomeclasse,$id)
+    {
+        // sql: delete from pessoa where id=:id
+        try {
+            // Cria objeto PDO
+            $pdo = new PDO(hostDb,usuario,senha);
+
+            // Configura o comportamento no caso de erros: levanta exceção.
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            // Não emula comandos preparados, usa nativo do driver do banco
+            $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
+
+            // Obtém o nome da classe e define o nome da tabela como sendo
+            // o nome da classe no plural em minúsculas
+            $aux = explode('\\',$nomeclasse);
+            $tabela = array_pop($aux);
+            $tabela = strtolower($tabela.'s');
+
+            $stmt = $pdo->prepare("delete from $tabela where id=:id");
+
+            // Executa comando SQL
+            $stmt->execute([':id'=>$id]);
+
+            $retorno = true;
+
+            // Desvia para catch no caso de erros.
+        } catch (PDOException $pex) {
+            //poder ser usado "$pex->getMessage();" ou "$pex->getCode();" para se obter detalhes sobre o erro.
+            $retorno = false;
+
+            // Sempre executa o bloco finally, tendo ocorrido ou não erros no bloco TRY
+        } finally {
+            $pdo=null;
+        }
+
+        return $retorno;
+    }
 
 
 
-
+    public static function UpdateNavio ($id, $nomeNavio, $numeroViagem)
+    {
+        $pdo = new PDO(hostDb,usuario,senha);
+        $stmt = $pdo->prepare("update navios set NOME = $nomeNavio, NUM_VIAGEM = $numeroViagem WHERE ID = $id");
+        var_dump($stmt);
+        echo ('<br> até aqui ok <br>');
+        $stmt->execute();
+    }
 
 }
 ?>

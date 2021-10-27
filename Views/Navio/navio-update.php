@@ -8,11 +8,11 @@ spl_autoload_register(function ($class_name) {
 use Models\Navio;
 use Db\Persiste;
 
-if ( isset($_POST['id']) && isset($_POST['nomeNavio']) && isset($_POST['numeroViagem']))
-{
+if ( isset($_POST['id']) && isset($_POST['nomeNavio']) && isset($_POST['numeroViagem'])) {
+    Persiste::UpdateNavio($_POST['id'],  $_POST['nomeNavio'], $_POST['numeroViagem']);
     // id foi colocado 0 pois será gerado automaticamente pelo banco de dados
-    $p = new Navio($_POST['id'],$_POST['nomeNavio'],$_POST['numeroViagem']);
-    Persiste::Update($p);
-    var_dump($p);
+    $n = new Navio($_POST['id'], $_POST['nomeNavio'], $_POST['numeroViagem']);
+  //  Persiste::Update($n);
+
 }
 ?>
