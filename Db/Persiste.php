@@ -308,15 +308,6 @@ class Persiste{
 		return $retorno;
 	}
 
-    public static function UpdateNavio($id, $nomeNavio, $numeroViagem)
-    {
-        $pdo = new PDO(hostDb,usuario,senha);
-        $stmt = $pdo->prepare("UPDATE navios set NOME = $nomeNavio, NUM_VIAGEM = $numeroViagem WHERE ID = $id");
-        $stmt->execute();
-    }
-
-
-
 
 }
 ?>
