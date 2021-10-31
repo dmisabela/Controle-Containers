@@ -26,13 +26,13 @@
     <div class="collapse navbar-collapse" id="collapsibleNavbar">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="/phpexemplo">Home</a>
+                <a class="nav-link" href="/Controle-Containers/Views/index.php">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/Navio/navio-index.php">Navio</a>
+                <a class="nav-link" href="/Controle-Containers/Views/Navio/navio-index.php">Navios</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/phpexemplo/Views/projeto.index.php">Projeto</a>
+                <a class="nav-link" href="/Controle-Containers/Views/Files/upload-file.php">Upload de Arquivos</a>
             </li>
         </ul>
     </div>
