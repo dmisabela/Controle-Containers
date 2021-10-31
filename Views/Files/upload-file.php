@@ -17,6 +17,9 @@
    <label for="idArq1">Arquivo Navio</label>
    <input type="file" name="arq1" value="" id="idArq1"/>
    <br/>
+   <label for="idArq2">Arquivo Clientes</label>
+   <input type="file" name="arq2" value="" id="idArq2"/>
+   <br/>
    <input type="submit" name="cmd" value="Carregar" />
   </form>
 </body>
