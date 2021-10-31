@@ -18,4 +18,13 @@ if ( isset($_POST['id']) && isset($_POST['nomeNavio']) && isset($_POST['numeroVi
 
 }
 ?>
-s
+<!DOCTYPE html>
+<html lang="pt_BR">
+  <head>
+    <title>Update</title>  
+  </head>
+  <body>
+  <?php include '..\header.php'; ?>
+    <h3>Sucesso! Dados do navio alterados.</h3>
+  </body>
+</html>

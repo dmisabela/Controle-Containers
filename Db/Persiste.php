@@ -256,8 +256,6 @@ class Persiste{
 
 			// Prepara o comando SQL
 			$stmt = $pdo->prepare("update $tabela set $parametros where ID=:ID");
-            var_dump($stmt);
-            var_dump($vetor);
 			// Executa comando SQL
 			$stmt->execute($vetor);
 
