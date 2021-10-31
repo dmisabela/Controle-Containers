@@ -20,6 +20,9 @@
    <label for="idArq2">Arquivo Clientes</label>
    <input type="file" name="arq2" value="" id="idArq2"/>
    <br/>
+   <label for="idArq3">Arquivo Containers</label>
+   <input type="file" name="arq3" value="" id="idArq3"/>
+   <br/>
    <input type="submit" name="cmd" value="Carregar" />
   </form>
 </body>
