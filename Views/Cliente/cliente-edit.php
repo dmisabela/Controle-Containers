@@ -12,23 +12,23 @@ $p = Persiste::GetById('Models\Cliente',$_GET['id']);
 
 ?>
 
-<h3>Editar Navio</h3>
+<h3>Editar Cliente</h3>
 <div class=container>
     <div class="row">
         <div class="col-sm-6">
-            <form action="navio-update.php" method="post">
+            <form action="cliente-update.php" method="post">
                 <input type="hidden" name="id" value="<?= $p->getID?>">
                 <div class="form-group">
                     <label for="nome">Nome</label>
-                    <input type="text" value="<?= $p->getNOME?>" name="nomeNavio" class="form-control" maxlength="100" required />
+                    <input type="text" value="<?= $p->getNOME?>" name="nomeCliente" class="form-control" maxlength="100" required />
                 </div>
                 <div class="form-group">
                     <label for="telefone">Numero da viagem</label>
-                    <input type="text" value="<?= $p->getNUM_VIAGEM?>" name="numeroViagem" class="form-control" maxlength="20" required/>
+                    <input type="text" value="<?= $p->getCNPJ?>" name="cnpjCliente" class="form-control" maxlength="20" required/>
                 </div>
                 <div class="form-group">
                     <input type="submit" value="Salvar" class="btn btn-primary btn-small"/>
-                    <a href="navio-index.php" class="btn btn-primary btn-small">Voltar</a>
+                    <a href="cliente-index.php" class="btn btn-primary btn-small">Voltar</a>
                 </div>
             </form>
         </div>

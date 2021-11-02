@@ -1,5 +1,5 @@
 <?php
-//header('location: navio-index.php'); // redireciona para o local indicado
+header('location: navio-index.php'); // redireciona para o local indicado
 
 spl_autoload_register(function ($class_name) {
     include '..\\..\\'.$class_name . '.php';
@@ -18,13 +18,3 @@ if ( isset($_POST['id']) && isset($_POST['nomeNavio']) && isset($_POST['numeroVi
 
 }
 ?>
-<!DOCTYPE html>
-<html lang="pt_BR">
-  <head>
-    <title>Update</title>  
-  </head>
-  <body>
-  <?php include '..\header.php'; ?>
-    <h3>Sucesso! Dados do navio alterados.</h3>
-  </body>
-</html>

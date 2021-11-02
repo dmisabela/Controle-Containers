@@ -32,6 +32,12 @@
                 <a class="nav-link" href="/Controle-Containers/Views/Navio/navio-index.php">Navios</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href="/Controle-Containers/Views/Cliente/cliente-index.php">Clientes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/Controle-Containers/Views/Container/container-index.php">Containers</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="/Controle-Containers/Views/Files/upload-file.php">Upload de Arquivos</a>
             </li>
         </ul>

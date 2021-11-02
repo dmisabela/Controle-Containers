@@ -5,19 +5,21 @@ namespace Models; // agrupamento de classes (caminho)
 // obs.: Atividade implementa a interface Idados, significando que implementa todos os métodos definidos pela interface
 class Cliente implements Idados{
     // Propriedades
-    protected $nome;
-    protected $cnpj;
+    protected $ID;
+    protected $NOME;
+    protected $CNPJ;
     // obs.: propriedades protected são acessíveis por subclasses (extend)
 
     // Método construtor.
-    public function __construct($nome,$cnpj){
-        $this->nome=$nome;
-        $this->cnpj=$cnpj;
+    public function __construct($id,$nome,$cnpj){
+        $this->ID = $id;
+        $this->NOME=$nome;
+        $this->CNPJ=$cnpj;
     }
 
     // Método obrigatório pois é definido na interface
     public function toString(){
-        return $this->nome.' '.$this->cnpj;
+        return  this->ID. ' '. $this->NOME.' '.$this->CNPJ;
     }
 
     // Método obrigatório pois é definido na interface
@@ -28,7 +30,7 @@ class Cliente implements Idados{
 
     // Método que retorna vetor associativo contendo os valores das propriedades
     public function toArray() {
-        return ['nome'=>$this->nome,'detalhe'=>$this->cnpj];
+        return ['ID'=>$this->ID, 'NOME'=>$this->NOME,'CNPJ'=>$this->CNPJ];
     }
 
     // Inclui o conteúdo do Trait
