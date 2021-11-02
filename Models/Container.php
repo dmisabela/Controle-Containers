@@ -14,7 +14,7 @@ class Container implements Idados{
 
     // Método construtor.
     public function __construct($id,$numCtn,$avarias, $idNavio, $idCliente){
-        $this->ID = $numCtn;
+        $this->ID = $id;
         $this->NUM_CTNR=$numCtn;
         $this->AVARIAS=$avarias;
         $this->ID_NAVIO=$idNavio;
@@ -40,4 +40,3 @@ class Container implements Idados{
     // Inclui o conteúdo do Trait
     use trait__get;
 }
-?>
