@@ -21,7 +21,7 @@ spl_autoload_register(function ($class_name) {
     <?php
 
     use Db\Persiste;
-    use Models\container;
+    use Models\Container;
 
     $clientes = Persiste::GetAll('Models\Container');
 
