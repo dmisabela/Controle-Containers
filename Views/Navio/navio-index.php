@@ -68,14 +68,14 @@ try {
     $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
     $stmt->execute();
 
+    $iterator = "";
+
     if ($stmt->rowCount() > 0) {
 
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $iterator = new IteratorIterator($stmt);
 
-    } else {
-        echo '<p>No results could be displayed.</p>';
-    }
+    } 
 
 } catch (Exception $e) {
     echo '<p>', $e->getMessage(), '</p>';
@@ -87,21 +87,27 @@ try {
     <tr><th>ID</th><th>Nome do Navio</th><th>Viagem do Navio</th><th></th><th></th></tr>
     <?php
 
-    foreach($iterator as $table){
+    if ($iterator != null) {
 
-        $id = $table['ID'];
-        $nome = $table['NOME'];
-        $nv = $table['NUM_VIAGEM'];
+        foreach($iterator as $table){
 
-        echo "<tr><td>$id</td><td>$nome</td><td>$nv</td>"
-            ."<td><a href='navio-edit.php?id=$id' class='btn btn-primary btn-small'>Editar</a></td>"
-            ."<td><a href='navio-delete.php?id=$id' class='btn btn-primary btn-small'>Excluir</a></td></tr>";
+            $id = $table['ID'];
+            $nome = $table['NOME'];
+            $nv = $table['NUM_VIAGEM'];
+    
+            echo "<tr><td>$id</td><td>$nome</td><td>$nv</td>"
+                ."<td><a href='navio-edit.php?id=$id' class='btn btn-primary btn-small'>Editar</a></td>"
+                ."<td><a href='navio-delete.php?id=$id' class='btn btn-primary btn-small'>Excluir</a></td></tr>";
+        }
+        echo '<div style="text-align:center"><p>', $prevlink, ' Page ', $page, ' of ', $pages, ' pages, displaying ', $start, '-', $end, ' of ', $total, ' results ', $nextlink, ' </p></div>';
     }
+
+    
     ?>
 </table>
 
 <?php
-echo '<div style="text-align:center"><p>', $prevlink, ' Page ', $page, ' of ', $pages, ' pages, displaying ', $start, '-', $end, ' of ', $total, ' results ', $nextlink, ' </p></div>';
+
 ?>
 
 <?php include '..\footer.php'; ?>
