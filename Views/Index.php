@@ -20,8 +20,6 @@
     <div class="col-sm-8">
       <h2>Descrição</h2>
       <p>TP de PHP - Controle de Containers</p>
-
-      <h1> ALA OS CONTAINER KKKKKKKKKKKKKKKKKKKK VRUM VRUM NAVIO </h1>
       <img src="https://media.istockphoto.com/photos/multicolor-shipping-containers-stacked-high-at-a-port-picture-id1226882751?b=1&k=20&m=1226882751&s=170667a&w=0&h=nZR2a7yrg6JN0lLI-oylOr4EVIsDplRL-9odvdGzGPg=" alt="">
     </div>
   </div>

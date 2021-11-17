@@ -1,7 +1,9 @@
 <?php 
-
+    use App\Repository;
     include('../helpers/connect.php');
-    
+
+    //$data = Repository::GetAllDataPaginated(1, 10, "navios");    
+
     $queryParams = Array();
     parse_str($_SERVER['QUERY_STRING'], $queryParams);
 
