@@ -1,6 +1,6 @@
 <?php
 spl_autoload_register(function ($class_name) {
-    include '..\\..\\' . $class_name . '.php';
+    include '..\\..\\'.$class_name . '.php';
 });
 ?>
 
@@ -8,32 +8,116 @@ spl_autoload_register(function ($class_name) {
 
 <h4>Produtos</h4>
 <a href="produto-create.php" class="btn btn-primary btn-small">Novo Produto</a>
+
+<?php
+use Db\Persiste;
+use Models\Navio;
+$navios = Persiste::GetAll('Models\Produto');
+
+try {
+
+    $pdo = new PDO(hostDb,usuario,senha);
+
+    // Configura o comportamento no caso de erros: levanta exceção.
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Não emula comandos preparados, usa nativo do driver do banco
+    $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
+
+    $total = $pdo->query('
+        SELECT
+            COUNT(*)
+        FROM
+            produtos
+    ')->fetchColumn();
+
+    $limit = 3;
+    $pages = ceil($total / $limit);
+
+    $page = min($pages, filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT, array(
+        'options' => array(
+            'default'   => 1,
+            'min_range' => 1,
+        ),
+    )));
+
+    $offset = ($page - 1)  * $limit;
+
+    $start = $offset + 1;
+    $end = min(($offset + $limit), $total);
+
+    $prevlink = ($page > 1) ? '<a href="?page=1" title="First page">&laquo;</a> <a href="?page=' . ($page - 1) . '" title="Previous page">&lsaquo;</a>' : '<span class="disabled">&laquo;</span> <span class="disabled">&lsaquo;</span>';
+
+    $nextlink = ($page < $pages) ? '<a href="?page=' . ($page + 1) . '" title="Next page">&rsaquo;</a> <a href="?page=' . $pages . '" title="Last page">&raquo;</a>' : '<span class="disabled">&rsaquo;</span> <span class="disabled">&raquo;</span>';
+
+
+    $stmt = $pdo->prepare('
+        SELECT
+            p.id as ID,
+            p.nome as NOME,
+            p.quantidade AS QUANTIDADE,
+            c.num_ctnr as NUM_CTNR
+        FROM
+            produtos p
+        INNER JOIN containers c ON (p.ID_CTNR = c.ID)
+        ORDER BY
+            id
+        LIMIT
+            :limit     
+        OFFSET
+            :offset
+    ');
+
+    $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+    $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+    $stmt->execute();
+
+    $iterator = "";
+
+    if ($stmt->rowCount() > 0) {
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $iterator = new IteratorIterator($stmt);
+
+    } 
+
+} catch (Exception $e) {
+    echo '<p>', $e->getMessage(), '</p>';
+}
+
+?>
+
 <table class="table table-striped" style="margin-top: 5px">
-    <tr>
-        <th>ID</th>
+<th>ID</th>
         <th>Nome</th>
         <th>Quantidade</th>
         <th>Container</th>
         <th></th>
         <th></th>
-    </tr>
     <?php
 
-    use Db\Persiste;
-    use Models\Produto;
+    if ($iterator != null) {
 
-    $produtos = Persiste::GetAll('Models\Produto');
+        foreach($iterator as $table){
+
+            $id = $table['ID'];
+            $nome = $table['NOME'];
+            $qtd = $table['QUANTIDADE'];
+            $num_ctnr = $table['NUM_CTNR'];
     
-    //echo($navio);
-
-    foreach ($produtos as $p) {
-        $container = Persiste::GetById('Models\Container', $p->getID_CTNR);
-        echo "<tr><td>$p->getID</td><td>$p->getNOME</td><td>$p->getQUANTIDADE</td> <td>$container->getNUM_CTNR</td>"
-            . "<td><a href='produto-edit.php?id=$p->getID' class='btn btn-primary btn-small'>Editar</a></td>"
-            . "<td><a href='produto-delete.php?id=$p->getID' class='btn btn-primary btn-small'>Excluir</a></td></tr>";
-    }
-
+            echo "<tr><td>$id</td><td>$nome</td><td>$qtd</td> <td>$num_ctnr</td>"
+            . "<td><a href='produto-edit.php?id=$id' class='btn btn-primary btn-small'>Editar</a></td>"
+            . "<td><a href='produto-delete.php?id=$id' class='btn btn-primary btn-small'>Excluir</a></td></tr>";
+        }
+        echo '<div style="text-align:center"><p>', $prevlink, ' Page ', $page, ' of ', $pages, ' pages, displaying ', $start, '-', $end, ' of ', $total, ' results ', $nextlink, ' </p></div>';
+    }    
     ?>
 </table>
 
+<?php
+
+?>
+
 <?php include '..\footer.php'; ?>
+
+
